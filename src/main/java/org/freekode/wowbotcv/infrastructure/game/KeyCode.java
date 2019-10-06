@@ -1,4 +1,4 @@
-package org.freekode.wowbotcv.infrastructure;
+package org.freekode.wowbotcv.infrastructure.game;
 
 import javax.swing.KeyStroke;
 

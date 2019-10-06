@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
+import org.bytedeco.javacv.Java2DFrameUtils;
+import org.bytedeco.opencv.opencv_core.Mat;
 import org.freekode.wowbotcv.domain.game.ImageProvider;
 
 public class FileImageProvider implements ImageProvider {
@@ -17,22 +19,27 @@ public class FileImageProvider implements ImageProvider {
 	}
 
 	@Override
-	public BufferedImage getImage(Rectangle rectangle) {
+	public Mat getImage(Rectangle rectangle) {
 		try {
 			InputStream file = getClass().getClassLoader().getResourceAsStream(filename);
-			BufferedImage bufferedImage = ImageIO.read(file);
-			return bufferedImage.getSubimage((int) rectangle.getX(), (int) rectangle.getY(), (int) rectangle.getWidth(), (int) rectangle.getHeight());
+			BufferedImage image = ImageIO.read(file);
+			image = cutImage(rectangle, image);
+			return Java2DFrameUtils.toMat(image);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
+	private BufferedImage cutImage(Rectangle rectangle, BufferedImage image) {
+		return image.getSubimage((int) rectangle.getX(), (int) rectangle.getY(), (int) rectangle.getWidth(), (int) rectangle.getHeight());
+	}
+
 	@Override
-	public void saveImage(BufferedImage image) {
+	public void saveImage(Mat mat) {
 		File file = new File("out.png");
 		try {
-			ImageIO.write(image, "png", file);
+			ImageIO.write(Java2DFrameUtils.toBufferedImage(mat), "png", file);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

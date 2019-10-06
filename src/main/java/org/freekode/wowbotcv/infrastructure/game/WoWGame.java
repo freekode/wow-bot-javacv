@@ -7,7 +7,7 @@ import org.freekode.wowbotcv.domain.game.ImageProvider;
 
 public class WoWGame extends Game {
 
-	WoWGame(
+	public WoWGame(
 			CoordinatesCalculator coordinatesCalculator,
 			ImageProvider imageProvider,
 			Controller controller) {

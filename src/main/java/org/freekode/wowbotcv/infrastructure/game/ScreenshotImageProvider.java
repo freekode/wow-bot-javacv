@@ -8,6 +8,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bytedeco.javacv.Java2DFrameUtils;
+import org.bytedeco.opencv.opencv_core.Mat;
 import org.freekode.wowbotcv.domain.game.ImageProvider;
 
 public class ScreenshotImageProvider implements ImageProvider {
@@ -25,17 +27,16 @@ public class ScreenshotImageProvider implements ImageProvider {
 	}
 
 	@Override
-	public BufferedImage getImage(Rectangle windowRectangle) {
+	public Mat getImage(Rectangle windowRectangle) {
 		BufferedImage image = robot.createScreenCapture(windowRectangle);
-		saveImage(image);
-		return image;
+		return Java2DFrameUtils.toMat(image);
 	}
 
 	@Override
-	public void saveImage(BufferedImage image) {
+	public void saveImage(Mat mat) {
 		File file = new File("screenshot.png");
 		try {
-			ImageIO.write(image, "png", file);
+			ImageIO.write(Java2DFrameUtils.toBufferedImage(mat), "png", file);
 		} catch (IOException e) {
 			log.error(e);
 		}

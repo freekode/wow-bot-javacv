@@ -1,11 +1,11 @@
 package org.freekode.wowbotcv.domain.game;
 
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 public interface ImageProvider {
 
-	BufferedImage getImage(Rectangle rectangle);
+	Mat getImage(Rectangle rectangle);
 
-	void saveImage(BufferedImage image);
+	void saveImage(Mat mat);
 }

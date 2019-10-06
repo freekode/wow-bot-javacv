@@ -2,6 +2,7 @@ package org.freekode.wowbotcv.domain.game;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 public abstract class Game {
 
@@ -20,17 +21,12 @@ public abstract class Game {
 		this.controller = controller;
 	}
 
-	public BufferedImage getWindowImage() {
+	public Mat getWindowImage() {
 		Rectangle window = coordinatesCalculator.getWindow();
 		return imageProvider.getImage(window);
 	}
 
-	public BufferedImage getRegionImage(Rectangle rectangle) {
-		Rectangle region = coordinatesCalculator.getRegion(rectangle);
-		return imageProvider.getImage(region);
-	}
-
-	public BufferedImage getRegionImage(RelativeRectangle relativeRectangle) {
+	public Mat getRegionImage(RelativeRectangle relativeRectangle) {
 		Rectangle region = coordinatesCalculator.getRegion(relativeRectangle);
 		return imageProvider.getImage(region);
 	}
