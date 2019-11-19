@@ -20,4 +20,8 @@ public class ValuePoint {
 	public float getValue() {
 		return value;
 	}
+
+	public boolean isGreaterThan(ValuePoint valuePoint) {
+		return value > valuePoint.value;
+	}
 }

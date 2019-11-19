@@ -1,4 +1,4 @@
-package org.freekode.wowbotcv.domain.processor;
+package org.freekode.wowbotcv.domain.processor.fishing;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +10,7 @@ import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Size;
 import org.freekode.wowbotcv.domain.game.Game;
 import org.freekode.wowbotcv.domain.game.RelativeRectangle;
+import org.freekode.wowbotcv.domain.processor.TemplateProvider;
 import org.freekode.wowbotcv.util.PointUtils;
 import org.freekode.wowbotcv.util.ValuePoint;
 
@@ -32,21 +33,47 @@ public class Fishing {
 		this.templates = templateProvider.getTemplates();
 	}
 
-	public Optional<ValuePoint> findBobber() {
+	public Optional<Bobber> findBobber() {
+		Mat regionImage = game.getRegionImage(FISHING_REGION);
+
+		Bobber bobber = getBobber(regionImage, templates);
+
+		return Optional.ofNullable(bobber);
+	}
+
+	private Bobber getBobber(Mat image, List<Mat> templates) {
+		Bobber bobber = null;
+		for (Mat template : templates) {
+			ValuePoint bobberPoint = findBobberPoint(image, template);
+			if (bobberPoint == null) {
+				continue;
+			}
+
+			if (bobber == null) {
+				bobber = new Bobber(template, bobberPoint);
+				continue;
+			}
+
+			if (bobberPoint.isGreaterThan(bobber.getValuePoint())) {
+				bobber = new Bobber(template, bobberPoint);
+			}
+		}
+		return bobber;
+	}
+
+	private ValuePoint findBobberPoint(Mat image, Mat template) {
 		try {
-			Mat regionImage = game.getRegionImage(FISHING_REGION);
+			Mat grayedImage = getGrayedMat(image);
+			Mat grayedTemplate = getGrayedMat(template);
+			Mat result = getPrepareResult(grayedImage, grayedTemplate);
 
-			Mat source = getGrayedMat(regionImage);
-			Mat template = getGrayedMat(templates.get(0));
-			Mat result = getPrepareResult(source, template);
-
-			opencv_imgproc.matchTemplate(source, template, result, opencv_imgproc.TM_CCOEFF_NORMED);
+			opencv_imgproc.matchTemplate(grayedImage, grayedTemplate, result, opencv_imgproc.TM_CCOEFF_NORMED);
 
 			List<ValuePoint> pointsAboveThreshold = PointUtils.getPointsFromMatAboveThreshold(result, THRESHOLD);
-			return PointUtils.getTopPoint(pointsAboveThreshold);
+			return PointUtils.getTopPoint(pointsAboveThreshold).orElse(null);
 		} catch (Exception e) {
 			log.error(e);
-			return Optional.empty();
+			return null;
 		}
 	}
 

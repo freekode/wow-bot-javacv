@@ -2,6 +2,7 @@ package org.freekode.wowbotcv.domain.processor
 
 import org.freekode.wowbotcv.domain.game.Controller
 import org.freekode.wowbotcv.domain.game.CoordinatesCalculator
+import org.freekode.wowbotcv.domain.processor.fishing.Fishing
 import org.freekode.wowbotcv.infrastructure.game.FileImageProvider
 import org.freekode.wowbotcv.infrastructure.game.WoWGame
 import org.freekode.wowbotcv.infrastructure.processor.FileTemplateProvider
@@ -21,7 +22,7 @@ class FishingTest extends Specification {
 
 		when:
 		def fishing = new Fishing(game, templateProvider)
-		def bobber = fishing.findBobber()
+		def bobber = fishing.findBobberPoint()
 
 		then:
 		bobber.isPresent()
